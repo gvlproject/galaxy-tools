@@ -24,12 +24,14 @@ Rscript phyloseq_nmds.R --biom=GP.biom --subset=6 --method=NMDS --distance=bray 
 Alpha version by Michael Thang of QFAB, Australia.
 
 1.22.3.1: Simon Gladman Melbourne Bioinformatics
+
     * Incorporated tests
     * Requirements
     * Version statement
     * Citations
 
 1.22.3.2: Michael Thang QFAB, Simon Gladman Melbourne Bioinformatics
+
     * Uses new version of BIOM1 datatype to get metadata
     * Output label changed as per user requirements
 
