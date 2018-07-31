@@ -25,24 +25,27 @@ Alpha version by Michael Thang of QFAB, Australia.
 
 1.22.3.1: Simon Gladman Melbourne Bioinformatics
 
-    * Incorporated tests
-    * Requirements
-    * Version statement
-    * Citations
+* Incorporated tests
+* Requirements
+* Version statement
+* Citations
 
 1.22.3.2: Michael Thang QFAB, Simon Gladman Melbourne Bioinformatics
 
-    * Uses new version of BIOM1 datatype to get metadata
-    * Output label changed as per user requirements
+* Uses new version of BIOM1 datatype to get metadata
+* Output label changed as per user requirements
 
 
 **R Script: phyloseq_nmds.R**
 
 0.1.0: Michael Thang QFAB
-    * Original version
+
+* Original version
 
 0.1.1: Michael Thang QFAB
-    * Added extra BIOM import functionality so it doesn't solely rely on phyloseq's internal importer.
+
+* Added extra BIOM import functionality so it doesn't solely rely on phyloseq's internal importer.
 
 0.1.2: Michael Thang QFAB
-    * BIOM functionality now requires the column header name in text.
+
+* BIOM functionality now requires the column header name in text.
