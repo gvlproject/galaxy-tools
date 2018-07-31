@@ -1,0 +1,156 @@
+<tool id="phyloseq_nmds" name="Phyloseq Ordination Plot" version="1.22.3.2" hidden="false">
+    <description>Ordination Plotting</description>
+    <requirements>
+        <requirement type="package" version="1.22.3">bioconductor-phyloseq</requirement>
+        <requirement type="package" version="1.20.0">r-getopt</requirement>
+        <requirement type="package" version="9.18">ghostscript</requirement>
+    </requirements>
+    <version_command><![CDATA[
+        echo $(R --version | grep version | grep -v GNU)", phyloseq version" $(R --vanilla --slave -e "library(phyloseq); cat(sessionInfo()\$otherPkgs\$phyloseq\$Version)" 2> /dev/null | grep -v -i "WARNING: ")
+    ]]></version_command>
+    <command detect_errors="exit_code"><![CDATA[
+        Rscript '${__tool_directory__}/phyloseq_nmds.R'
+        #if str($file_source.file_source_selector) == "set_biom":
+            --biom='$file_source.input'
+            --subset='$file_source.subsetColumn'
+        #else:
+            --otu_table='$OTU_TABLE'
+            --tax_table='$TAX_TABLE'
+            --meta_table='$META_TABLE'
+            --category='$file_source.category'
+        #end if
+        --method='$ord_method'
+        --distance='$distance'
+        --kingdom='$kingdom_field'
+        --cutoff='$cutoff'
+        --keep='$keep'
+        --filter='$nsample'
+        --plottype='$plot_type'
+        --outdir="$htmlfile.files_path"
+        --htmlfile='$htmlfile'
+        ]]>
+    </command>
+
+    <inputs>
+        <conditional name="file_source">
+            <param name="file_source_selector" type="select" label="Choose an input file type">
+                <option value="set_biom" selected="True">BIOM File</option>
+                <option value="set_table">TABULAR File</option>
+            </param>
+            <when value="set_biom">
+                <param format="biom1" name="input" type="data" label="Input File"/>
+                <param name="subsetColumn" type="select" label="Select variable for ordination">
+                    <options>
+                        <filter type="data_meta" ref="input" key="table_column_metadata_headers" />
+                    </options>
+                </param>
+            </when>
+            <when value="set_table">
+                <param format="tabular" name="OTU_TABLE" type="data" label="OTU table"/>
+                <param format="tabular" name="TAX_TABLE" type="data" label="Taxonomy table"/>
+                <param format="tabular" name="META_TABLE" type="data" label="Metadata table"/>
+                <param name="category" type="data_column" data_ref="META_TABLE" use_header_names="TRUE" label="Select variable for ordination"/>
+            </when>
+        </conditional>
+        <param name="ord_method" type="select" display="radio" label="Select Ordination method">
+            <option value="NMDS" selected="true">NMDS(Non-metric Multidimensional Scalling)</option>
+            <option value="DCA">DCA (Detrended Correspondence Analysis)</option>
+            <option value="CCA">CCA (Constrained Correspondence Analysis)</option>
+            <option value="RDA">RDA (Redundancy Analysis)</option>
+            <option value="DPCoA">DPCoA (Double Principle Coordinate Analysis)</option>
+            <option value="MDS">MDS (Multidimensional Scaling)</option>
+            <option value="PCoA">PCoA (Principal Coordinate Analysis)</option>
+        </param>
+        <param name="distance" type="select" display="radio" label="Select Distance method">
+            <option value="bray" selected="true">bray (Bray-Curtis distance)</option>
+            <option value="gower">gower (Gower's distance)</option>
+            <option value="jsd">jds (Jensen-Shannon Divergence)</option>
+            <option value="unifrac">unifrac (unweighted UniFrac distance)</option>
+            <option value="wunifrac">wunifrac (weighted-UniFrac distance)</option>
+        </param>
+        <param name="kingdom_field" type="select" display="radio" label="Select a taxonomic rank for the analysis">
+            <option value="Kingdom">Kingdom</option>
+            <option value="Phylum" selected="true">Phylum</option>
+            <option value="Class">Class</option>
+            <option value="Order">Order</option>
+            <option value="Family">Family</option>
+            <option value="Genus">Genus</option>
+            <option value="Species">Species</option>
+        </param>
+        <param name="plot_type" type="select" label="Type of Plot" help="Ordination plot type (Plot OTUs, Plot SAMPLE, Biplot graphic, Split plot graphic)">
+            <option value="1">OTU</option>
+            <option value="2">SAMPLE</option>
+        </param>
+        <param name="nsample" size="10" type="float" value="0.5" label="Specify the number of samples to discard" help="i.e. remove OTUs from the analysis that do not appear more than X times in more than Y% of the samples (where 1.0 = 100%)"/>
+        <param name="cutoff" size="10" type="integer" value="5" label="specify value of X" help="Remove OTUs that do not appear more than X times (e.g., 5 times)"/>
+        <param name="keep" size="10" type="integer" value="5" label="Number of the most abundant taxonomic rank units to keep" help="e.g. Phyla, Class and etc"/>
+    </inputs>
+
+    <outputs>
+        <data format="html" name="htmlfile" label="${tool.name} - ${ord_method.value_label}_${distance.value_label}.html"/>
+    </outputs>
+
+    <tests>
+        <test>  <!-- Test #1: Test BIOM format input -->
+                <!-- Equivalent command (replace + with double dash): Rscript phyloseq_nmds.R +biom=test-data/GP.biom +subset=6 +method=NMDS
+                +distance=bray +kingdom=Phylum +cutoff=5 +keep=5 +outdir=outputdir +htmlfile=biom_out.html -->
+            <conditional name="file_source">
+                <param name="file_source_selector" value="set_biom"/>
+                <param name="input" value="GP.biom" format="biom1"/>
+                <param name="subsetColumn" value="Primer" />
+            </conditional>
+            <output name="htmlfile" ftype="html" file="biom_out.html" />
+        </test>
+        <test>  <!-- Test #2: Test TABULAR format inputs -->
+                <!-- Equivalent command (replace + with double dash): Rscript phyloseq_nmds.R +otu_table=test-data/GP_OTU_TABLE.txt
+                +tax_table=test-data/GP_TAX_TABLE.txt +meta_table=test-data/GP_SAMPLE_TABLE.txt
+                +method="bray" +kingdom=Phylum +cutoff=5 + keep=5 +category=6 +outdir=outputdir +htmlfile=test.html -->
+            <conditional name="file_source">
+                <param name="file_source_selector" value="set_table" />
+                <param name="OTU_TABLE" value="GP_OTU_TABLE.txt" />
+                <param name="TAX_TABLE" value="GP_TAX_TABLE.txt" />
+                <param name="META_TABLE" value="GP_SAMPLE_TABLE.txt" />
+                <param name="category" value="6" />
+            </conditional>
+            <output name="htmlfile" ftype="html" file="test.html" />
+        </test>
+    </tests>
+
+    <help>
+**What it does**
+Creates NMDS plot using R package called phyloseq_.
+
+.. _phyloseq: https://joey711.github.io/phyloseq/plot_ordination-examples.html
+
+-----
+
+**Input**
+
+- **Choose an input file type** - BIOM File or TABULAR file
+- **Select variable for ordination** - This column is used to extract unique value from the column of interest for ordination plot
+- **OTU TABLE** - this is a OTU matrix
+- **Taxonomy TABLE** - this is a TAX matrix
+- **Metadata TABLE** - this is a metadata file of the experiment design
+- **Select Ordination method** - select ordination method
+- **Select Distance method** - select distance method for ordination plot
+- **Select a taxonomic rank for the analysis** - select a taxonomy for NMDS plot
+- **Specify the number of samples to discard** - Y% of samples to discard (where 1.0 = 100%)
+- **specify value of X** - Remove OTUs that do not appear more than X times (e.g., 5 times)
+- **Number of the most abundant taxonomic rank units** - taxonomic rank units (e.g. Phyla, Class etc) to keep
+
+-----
+
+=========
+Resources
+=========
+
+**Wrapper Authors**
+
+QFAB Bioinformatics (support@qfab.org)
+Melbourne Bioinformatics
+
+    </help>
+    <citations>
+        <citation type="doi">10.18129/B9.bioc.phyloseq</citation>
+    </citations>
+</tool>
