@@ -1,0 +1,6 @@
+categories: [Metagenomics]
+description: Phyloseq NMDS plot
+long_description: Produces Phyloseq NMDS plots from either a biom1 file or a collection
+  of OTU, TAX and SAMPLE tables
+name: phyloseq_nmds
+owner: simon-gladman

@@ -49,7 +49,7 @@
                 <param format="tabular" name="OTU_TABLE" type="data" label="OTU table"/>
                 <param format="tabular" name="TAX_TABLE" type="data" label="Taxonomy table"/>
                 <param format="tabular" name="META_TABLE" type="data" label="Metadata table"/>
-                <param name="category" type="data_column" data_ref="META_TABLE" use_header_names="TRUE" label="Select variable for ordination"/>
+                <param name="category" type="data_column" data_ref="META_TABLE" use_header_names="True" label="Select variable for ordination"/>
             </when>
         </conditional>
         <param name="ord_method" type="select" display="radio" label="Select Ordination method">
@@ -96,7 +96,7 @@
                 +distance=bray +kingdom=Phylum +cutoff=5 +keep=5 +outdir=outputdir +htmlfile=biom_out.html -->
             <conditional name="file_source">
                 <param name="file_source_selector" value="set_biom"/>
-                <param name="input" value="GP.biom" format="biom1"/>
+                <param name="input" value="GP.biom" />
                 <param name="subsetColumn" value="Primer" />
             </conditional>
             <output name="htmlfile" ftype="html" file="biom_out.html" />
