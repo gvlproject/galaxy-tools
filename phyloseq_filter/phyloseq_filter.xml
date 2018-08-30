@@ -1,0 +1,125 @@
+<tool id="biom_filter" name="Phyloseq Biom Filtering" version="1.22.3.2" hidden="false">
+    <description>biom file filter</description>
+    <requirements>
+        <requirement type="package" version="1.22.3">bioconductor-phyloseq</requirement>
+        <requirement type="package" version="1.20.0">r-getopt</requirement>
+        <requirement type="package" version="1.0.11">r-doparallel</requirement>
+        <requirement type="package" version="1.20.0">bioconductor-metagenomeseq</requirement>
+        <requirement type="package" version="9.18">ghostscript</requirement>
+    </requirements>
+    <version_command><![CDATA[
+        echo $(R --version | grep version | grep -v GNU)", phyloseq version" $(R --vanilla --slave -e "library(phyloseq); cat(sessionInfo()\$otherPkgs\$phyloseq\$Version)" 2> /dev/null | grep -v -i "WARNING: ")
+    ]]></version_command>
+    <command detect_errors="exit_code"><![CDATA[
+        Rscript '${__tool_directory__}/phyloseq_filter.R'
+        #if str($file_source.file_source_selector) == "set_biom":
+            --biom='$file_source.input'
+        #else:
+            --otu_table='$OTU_TABLE'
+            --tax_table='$TAX_TABLE'
+            --meta_table='$META_TABLE'
+        #end if
+        --cutoff='$cutoff'
+        --kingdom='$kingdom_field'
+        --keep='$keep'
+        --filter='$nsample'
+        --outbiom='$outputbiom'
+        --outdir="$htmlfile.files_path"
+        --htmlfile='$htmlfile'
+        ]]>
+    </command>
+
+    <inputs>
+        <conditional name="file_source">
+            <param name="file_source_selector" type="select" label="Choose an input file type">
+                <option value="set_biom" selected="True">BIOM File</option>
+                <option value="set_table">TABULAR File</option>
+            </param>
+            <when value="set_biom">
+                <param format="biom1" name="input" type="data" label="Input File"/>
+            </when>
+            <when value="set_table">
+                <param format="tabular" name="OTU_TABLE" type="data" label="OTU table"/>
+                <param format="tabular" name="TAX_TABLE" type="data" label="Taxonomy table"/>
+                <param format="tabular" name="META_TABLE" type="data" label="Metadata table"/>
+            </when>
+        </conditional>
+        <param name="kingdom_field" type="select" display="radio" label="Select a taxonomic rank for the analysis">
+            <option value="Kingdom">Kingdom</option>
+            <option value="Phylum" selected="true">Phylum</option>
+            <option value="Class">Class</option>
+            <option value="Order">Order</option>
+            <option value="Family">Family</option>
+            <option value="Genus">Genus</option>
+            <option value="Species">Species</option>
+        </param>
+        <param name="keep" size="10" type="integer" value="5" label="Number of the most abundant taxonomic rank units to keep in the filtered BIOM file" help="e.g. Phyla, Class and etc. as specified above. Select a value > 1."/>
+        <param name="cutoff" size="10" type="integer" value="5" label="Filter out OTUs. Remove OTUs from the analysis that do not appear more than X times in more than Y% of the samples. Specify value of X" help="Remove OTUs that do not appear more than X times (e.g., 5 times)"/>
+        <param name="nsample" size="10" type="float" value="0.5" label="Specify value of Y (where 1.0 = 100%)"/>
+    </inputs>
+
+    <outputs>
+        <data format="biom1" name="outputbiom" label="${tool.name} on ${on_string}.biom"/>
+        <data format="html" name="htmlfile" label="${tool.name} on ${on_string} Sample Abundance plot.html"/>
+    </outputs>
+
+    <tests>
+        <test>  <!-- Test #1: Test BIOM format input -->
+                <!-- Equivalent command (replace + with double dash): Rscript phyloseq_nmds.R +biom=test-data/GP.biom +subset=6 +method=NMDS
+                +distance=bray +kingdom=Phylum +cutoff=5 +keep=5 +outdir=outputdir +htmlfile=biom_out.html -->
+            <conditional name="file_source">
+                <param name="file_source_selector" value="set_biom"/>
+                <param name="input" value="GP.biom" />
+                <param name="subsetColumn" value="Primer" />
+            </conditional>
+            <output name="htmlfile" ftype="html" file="biom_out.html" />
+        </test>
+        <test>  <!-- Test #2: Test TABULAR format inputs -->
+                <!-- Equivalent command (replace + with double dash): Rscript phyloseq_nmds.R +otu_table=test-data/GP_OTU_TABLE.txt
+                +tax_table=test-data/GP_TAX_TABLE.txt +meta_table=test-data/GP_SAMPLE_TABLE.txt
+                +method="bray" +kingdom=Phylum +cutoff=5 + keep=5 +category=6 +outdir=outputdir +htmlfile=test.html -->
+            <conditional name="file_source">
+                <param name="file_source_selector" value="set_table" />
+                <param name="OTU_TABLE" value="GP_OTU_TABLE.txt" />
+                <param name="TAX_TABLE" value="GP_TAX_TABLE.txt" />
+                <param name="META_TABLE" value="GP_SAMPLE_TABLE.txt" />
+                <param name="category" value="6" />
+            </conditional>
+            <output name="htmlfile" ftype="html" file="test.html" />
+        </test>
+    </tests>
+
+    <help>
+**What it does**
+Filter BIOM file using R package called phyloseq_.
+
+.. _phyloseq: https://joey711.github.io/phyloseq/plot_ordination-examples.html
+
+-----
+
+**Input**
+
+- **Choose an input file type** - BIOM File or TABULAR file
+- **OTU TABLE** - this is a OTU matrix
+- **Taxonomy TABLE** - this is a TAX matrix
+- **Metadata TABLE** - this is a metadata file of the experiment design
+- **Select a taxonomic rank for the analysis** - select a taxonomy for filtering
+- **Specify value of Y (where 1.0=100%)** - Filter out OTUs from the analysis that do not appear more than X times in more than Y% of the samples
+- **Specify value of X** - Remove OTUs that do not appear more than X times (e.g., 5 times)
+- **Number of the most abundant taxonomic rank units to keep in the filtered BIOM file** - taxonomic rank units (e.g. Phyla, Class etc) to keep
+
+-----
+
+=========
+Resources
+=========
+
+**Wrapper Authors**
+
+QFAB Bioinformatics (support@qfab.org)
+Melbourne Bioinformatics
+    </help>
+    <citations>
+        <citation type="doi">10.18129/B9.bioc.phyloseq</citation>
+    </citations>
+</tool>
