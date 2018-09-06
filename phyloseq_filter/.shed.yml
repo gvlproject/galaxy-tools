@@ -1,0 +1,5 @@
+categories: [Metagenomics]
+description: Phyloseq filter
+long_description: Filter BIOM file or Phyloseq matrices using R package called phyloseq_.
+name: phyloseq_filter
+owner: simon-gladman
