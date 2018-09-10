@@ -181,7 +181,7 @@ create_PDF<-function(pdf_file,OTU_DATAFRAME_BEFORE_FILTERING,OTU_DATAFRAME_AFTER
 create_HTML<-function(htmlfile){
     htmlfile_handle <- file(htmlfile)
     html_output = c('<html><body>',
-                    '<table align="center>',
+                    '<table align="center">',
                     '<tr>',
                     '<td valign="middle" style="vertical-align:middle;">',
                         '<a href="pdffile.pdf"><img src="barplot_before_filtering.png"/></a>',
@@ -203,7 +203,7 @@ create_HTML<-function(htmlfile){
                     '</td>',
                     '</tr>',
                     '</table>',
-                    '</html></body>');
+                    '</body></html>');
      writeLines(html_output, htmlfile_handle);
      close(htmlfile_handle);
 }
