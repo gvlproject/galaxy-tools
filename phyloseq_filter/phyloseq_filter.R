@@ -152,7 +152,7 @@ create_PDF<-function(pdf_file,OTU_DATAFRAME_BEFORE_FILTERING,OTU_DATAFRAME_AFTER
 
     #png('barplot_pre_phyla_filtering.png')
     bitmap(pngfile_pre_phyla_filtering,"png16m")
-    print(sample_data(physeq_pre_phyla_filtering))
+    #print(sample_data(physeq_pre_phyla_filtering))
     barplot_pre_phyla_filtering<-plot_bar(physeq_pre_phyla_filtering, x=colnames(sample_data(physeq_pre_phyla_filtering))[1], fill=kingdom_str) +
                                  geom_bar(stat="identity", position="stack") +
                                  labs(title=paste("Sample Depth Bar Chart",kingdom_str,sep=":"),subtitle="Sample Vs Abundance (Pre Phyla Filtering)",caption="source: Input Biom") +
