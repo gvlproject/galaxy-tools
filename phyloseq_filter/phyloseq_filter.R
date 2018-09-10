@@ -212,7 +212,7 @@ convert_phyloseq_otutable_to_dataframe<-function(physeq_obj){
     temp.df<-data.frame(otu_table(physeq_obj))   
     temp.df.counts<-as.data.frame(colSums(temp.df))
     colnames(temp.df.counts)<-"Abundance"
-    print(temp.df.counts)
+    #print(temp.df.counts)
     return(temp.df.counts)
 }
 
