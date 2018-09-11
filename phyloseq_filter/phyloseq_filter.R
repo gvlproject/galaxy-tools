@@ -66,6 +66,7 @@ pngfile_post_phyla_filtering<- gsub("[ ]+", "", paste(options$outdir,"/barplot_a
 htmlfile <- gsub("[ ]+", "", paste(options$htmlfile))
 
 ### overwrite the write_biom function for proper BIOM format
+### https://github.com/smdabdoub/biomformat/blob/master/R/IO-methods.R#L124
 write_biom <- function(x, biom_file){
         cat(toJSON(x, always_decimal=TRUE, auto_unbox=TRUE), file=biom_file)
 }
