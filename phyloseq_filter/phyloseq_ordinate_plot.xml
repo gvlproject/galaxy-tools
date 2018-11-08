@@ -37,7 +37,7 @@
             </param>
             <when value="set_biom">
                 <param format="biom1" name="input" type="data" label="Input File"/>
-                <param name="subsetColumn" type="select" label="Select variable for ordination">
+                <param name="subsetColumn" type="select" label="Classify plot by">
                     <options>
                         <filter type="data_meta" ref="input" key="table_column_metadata_headers" />
                     </options>
@@ -47,7 +47,7 @@
                 <param format="tabular" name="OTU_TABLE" type="data" label="OTU table"/>
                 <param format="tabular" name="TAX_TABLE" type="data" label="Taxonomy table"/>
                 <param format="tabular" name="META_TABLE" type="data" label="Metadata table"/>
-                <param name="category" type="data_column" data_ref="META_TABLE" use_header_names="True" label="Select variable for ordination"/>
+                <param name="category" type="data_column" data_ref="META_TABLE" use_header_names="True" label="Classify plot by"/>
             </when>
         </conditional>
         <param name="ord_method" type="select" display="radio" label="Select Ordination method">
@@ -114,21 +114,19 @@
 
     <help>
 **What it does**
-Creates NMDS plot using R package called phyloseq_.
+Creates various ordination plot using an R_package_called_phyloseq_,specifically according to the methods outlined in the Phyloseq_Ordination_Plot_Tutorial_.
 
-.. _phyloseq: https://joey711.github.io/phyloseq/plot_ordination-examples.html
+.. _R_package_called_phyloseq: https://joey711.github.io/phyloseq/index.html
+.. _Phyloseq_Ordination_Plot_Tutorial: https://joey711.github.io/phyloseq/plot_ordination-examples.html
 
 -----
 
 **Input**
 
-- **Choose an input file type** - BIOM File or TABULAR file
-- **Select variable for ordination** - This column is used to extract unique value from the column of interest for ordination plot
-- **OTU TABLE** - this is a OTU matrix
-- **Taxonomy TABLE** - this is a TAX matrix
-- **Metadata TABLE** - this is a metadata file of the experiment design
-- **Select Ordination method** - select ordination method
-- **Select Distance method** - select distance method for ordination plot
+- **Choose an input file type** - either 1 BIOM File or 3 TABULAR files (OTU, taxonomy and Metadata tables)
+- **Classify plot by** - points on the plot will be colour coded according to their value of the selected feature
+- **Select Ordination method** - several methods are supported
+- **Select Distance method** - several methods are supported
 - **Select a taxonomic rank for the analysis** - select a taxonomy for ordination plot
 
 -----
