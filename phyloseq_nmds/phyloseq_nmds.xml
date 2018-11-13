@@ -96,7 +96,7 @@
                 +distance=bray +kingdom=Phylum +cutoff=5 +keep=5 +outdir=outputdir +htmlfile=biom_out.html -->
             <conditional name="file_source">
                 <param name="file_source_selector" value="set_biom"/>
-                <param name="input" value="GP.biom" />
+                <param name="input" value="GP.biom" ftype="biom1" />
                 <param name="subsetColumn" value="Primer" />
             </conditional>
             <output name="htmlfile" ftype="html" file="biom_out.html" />

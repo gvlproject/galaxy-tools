@@ -1,0 +1,6 @@
+categories: [Metagenomics]
+description: Phyloseq Ordination plot
+long_description: Produces Phyloseq Ordination plots from either a biom1 file or a set
+  of OTU, TAX and SAMPLE tables
+name: phyloseq_ordination_plot
+owner: simon-gladman
