@@ -323,12 +323,19 @@ if(!is.null(options$biom)){
 
     physeq_filter_post_transform = prune_taxa((tax_table(physeq_filter_post_transform)[, kingdom_str] %in% topphyla_post_transform), physeq_filter_post_transform)
 
+	### remove samples with zero value
+    otu_table(physeq_filter_post_transform)<-otu_table(physeq_filter_post_transform)[,colSums(otu_table(physeq_filter_post_transform)) > 0]
 
     create_PDF(pdffile,before_filtering_dataframe_sampleCounts,after_filtering_dataframe_sampleCounts,physeq_filter_pre_transform,physeq_filter_post_transform,kingdom_str,htmlfile,pngfile_before_filtering,pngfile_after_filtering,pngfile_pre_phyla_filtering,pngfile_post_phyla_filtering)
 
     ### convert phyloseq object to metagenomeSeq - preparing for BIOM output
-    metagenomeSeq_obj <- phyloseq_to_metagenomeSeq(physeq_filter_post_transform)
-    metagenomeSeq_biom <- MRexperiment2biom(metagenomeSeq_obj)
+    #metagenomeSeq_obj <- phyloseq_to_metagenomeSeq(physeq_filter_post_transform)
+    #metagenomeSeq_biom <- MRexperiment2biom(metagenomeSeq_obj)
+	
+	biom_obj=make_biom(otu_table(physeq_filter_post_transform),sample_metadata=sample_data(physeq_filter_post_transform),observation_metadata=tax_table(physeq_filter_post_transform),matrix_element_type="float")
+    biom_obj_2_metagenomeSeq_obj<-biom2MRexperiment(biom_obj)
+    metagenomeSeq_biom <- MRexperiment2biom(biom_obj_2_metagenomeSeq_obj)
+
 
     ## write biom file
     write_biom(metagenomeSeq_biom, biom_file=options$outbiom)

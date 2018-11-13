@@ -94,22 +94,20 @@
 
     <help>
 **What it does**
-Filter BIOM file using R package called phyloseq_.
+Filter out low abundance OTUs and/or data corresponding to the least represented taxonomic grouping using R package called R_package_called_phyloseq_, and specifically according to the pre-processing step outlined in the Phyloseq_Ordination_Plot_Tutorial_.
 
-.. _phyloseq: https://joey711.github.io/phyloseq/plot_ordination-examples.html
+.. _R_package_called_phyloseq: https://joey711.github.io/phyloseq/index.html
+.. _Phyloseq_Ordination_Plot_Tutorial: https://joey711.github.io/phyloseq/plot_ordination-examples.html
 
 -----
 
 **Input**
 
-- **Choose an input file type** - BIOM File or TABULAR file
-- **OTU TABLE** - this is a OTU matrix
-- **Taxonomy TABLE** - this is a TAX matrix
-- **Metadata TABLE** - this is a metadata file of the experiment design
-- **Select a taxonomic rank for the analysis** - select a taxonomy for filtering
-- **Specify value of Y (where 1.0=100%)** - Filter out OTUs from the analysis that do not appear more than X times in more than Y% of the samples
-- **Specify value of X** - Remove OTUs that do not appear more than X times (e.g., 5 times)
-- **Number of the most abundant taxonomic rank units to keep in the filtered BIOM file** - taxonomic rank units (e.g. Phyla, Class etc) to keep
+- **Choose an input file type** - either 1 BIOM file or 3 TABULAR files (i.e. OTU, Taxonomy and Metadata tables)
+- **Select a taxonomic rank for the analysis** - if filtering out low abundance taxa, this is the level of the taxonomy that you want to filter on (e.g. phyla, species)
+- **Number of the most abundant taxonomic rank units to keep in the filtered BIOM file** - the number of the most abundant taxonomic rank units specified above to keep (e.g. remove all the most abundant 5 phyla or species)
+- **Specify value of X** - if filtering out low abundance OTUs, use this to specify a value of X (where OTUs are removed that do not appear more than X times in more than Y% of the samples)
+- **Specify value of Y (where 1.0=100%)** - if filtering out low abundance OTUs use this to specify a value of Y (where OTUs are removed that do not appear more than X times in more than Y% of the samples)
 
 -----
 

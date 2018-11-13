@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <tool id='meancentermatrix' name='meancentermatrix' >
+	  <description>Mean Center Sample N columns and Value X Rows matrix avg based on rows</description>
+	  <command interpreter="python">computeRowMean.py  '$input_table' '$outfile'   </command>
+	  <inputs>
+			<param format="tabular" name="input_table" type="data" label="Input Matrix" help="Input tab delimited expression matrix for values to be mean-centered"/>
+	  </inputs>
+	  <outputs>
+			<data format="tabular"  name="outfile"/>
+	  </outputs>
+  <tests>
+    <test>
+      <param name='input_table' value='input.txt' />
+      <output name='outfile' file='output.txt' />
+    </test>
+  </tests>
+  <help>This tool mean-centered a count table with the row mean value</help>
+</tool>
