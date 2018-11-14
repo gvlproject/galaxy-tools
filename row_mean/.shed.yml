@@ -1,5 +1,5 @@
 categories: [Statistics]
 description: This tool calculates row mean values for a table of numerics
-long_description: This tool mean-centered an array with the row mean value
+long_description: Calculates means of each row of a table of numeric data
 name: row_means
 owner: simon-gladman
