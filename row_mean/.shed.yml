@@ -1,0 +1,5 @@
+categories: [Statistics]
+description: This tool calculates row mean values for a table of numerics
+long_description: This tool mean-centered an array with the row mean value
+name: row_means
+owner: simon-gladman

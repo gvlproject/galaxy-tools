@@ -1,0 +1,49 @@
+<tool id='row_means' name='Row Means' version="0.1">
+    <description>Calculates the mean of a row of numbers for an entire table</description>
+    <version_command><![CDATA[
+        python '${__tool_directory__}/means_by_row.py --version'
+    ]]></version_command>
+    <command detect_errors="exit_code"><![CDATA[
+        python '${__tool_directory__}/means_by_row.py'
+            --infile '$input_table'
+            --outfile '$outfile'
+            --skip $skip_rows
+        ]]>
+    </command>
+    <inputs>
+        <param format="tabular" name="input_table" type="data" label="Input Table" help="Input tab delimited numeric table for which row means will be calculated"/>
+        <param type="integer" name="skip_rows" value="0" label="Number of header rows to skip" help="Skip this number of header rows in case they are header labels etc." />
+	</inputs>
+	<outputs>
+        <data format="tabular" name="outfile"/>
+    </outputs>
+    <tests>
+        <test>
+            <param name='input_table' value='input.txt' />
+            <output name='outfile' file='output.txt' />
+        </test>
+        <test>
+            <param name='input_table' value='input.txt' />
+            <param name='skip_rows' value="3" />
+            <output name='outfile' file='skip_out.txt' />
+        </test>
+    </tests>
+    <help><![CDATA[
+This tool outputs a list with the mean values of the rows of a numeric input table.
+
+It takes a tabular input of numeric data and can skip header rows if required.
+
+Non-numeric data or blanks are skipped and not included in mean calculations.
+    ]]>
+    </help>
+    <citations>
+        <citation type="bibtex">
+@UNPUBLISHED{Gladman2018,
+    author = {Simon Gladman and Mike Thang},
+    title = {Row Mean: Calculates the mean of a row of numbers for an entire table},
+    year = {2018},
+    url = {https://github.com/gvlproject/galaxy-tools},
+}
+        </citation>
+    </citations>
+</tool>
