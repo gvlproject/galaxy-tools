@@ -2,10 +2,10 @@ library('getopt')
 library('ape')
 library('ggplot2')
 suppressPackageStartupMessages(library('phyloseq'))
-library(biomformat)
 library(plyr)
 Sys.setenv("DISPLAY"=":1")
 library(biomformat)
+library(jsonlite)
 suppressPackageStartupMessages(library(metagenomeSeq))
 suppressPackageStartupMessages(library("doParallel"))
 ncores = ceiling(detectCores() * 0.8)
@@ -64,6 +64,12 @@ pngfile_after_filtering <- gsub("[ ]+", "", paste(options$outdir,"/barplot_after
 pngfile_pre_phyla_filtering <- gsub("[ ]+", "", paste(options$outdir,"/barplot_before_phyla_filtering.png"))
 pngfile_post_phyla_filtering<- gsub("[ ]+", "", paste(options$outdir,"/barplot_after_phyla_filtering.png"))
 htmlfile <- gsub("[ ]+", "", paste(options$htmlfile))
+
+### overwrite the write_biom function for proper BIOM format
+### https://github.com/smdabdoub/biomformat/blob/master/R/IO-methods.R#L124
+write_biom <- function(x, biom_file){
+        cat(toJSON(x, always_decimal=TRUE, auto_unbox=TRUE), file=biom_file)
+}
 
 ### This function accepts different two different type of BIOM file format
 readBIOM<-function(inBiom){
@@ -152,7 +158,7 @@ create_PDF<-function(pdf_file,OTU_DATAFRAME_BEFORE_FILTERING,OTU_DATAFRAME_AFTER
 
     #png('barplot_pre_phyla_filtering.png')
     bitmap(pngfile_pre_phyla_filtering,"png16m")
-    print(sample_data(physeq_pre_phyla_filtering))
+    #print(sample_data(physeq_pre_phyla_filtering))
     barplot_pre_phyla_filtering<-plot_bar(physeq_pre_phyla_filtering, x=colnames(sample_data(physeq_pre_phyla_filtering))[1], fill=kingdom_str) +
                                  geom_bar(stat="identity", position="stack") +
                                  labs(title=paste("Sample Depth Bar Chart",kingdom_str,sep=":"),subtitle="Sample Vs Abundance (Pre Phyla Filtering)",caption="source: Input Biom") +

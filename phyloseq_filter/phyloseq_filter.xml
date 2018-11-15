@@ -54,8 +54,8 @@
             <option value="Species">Species</option>
         </param>
         <param name="keep" size="10" type="integer" value="5" label="Number of the most abundant taxonomic rank units to keep in the filtered BIOM file" help="e.g. Phyla, Class and etc. as specified above. Select a value > 1."/>
-        <param name="cutoff" size="10" type="integer" value="5" label="Filter out OTUs. Remove OTUs from the analysis that do not appear more than X times in more than Y% of the samples. Specify value of X" help="Remove OTUs that do not appear more than X times (e.g., 5 times)"/>
-        <param name="nsample" size="10" type="float" value="0.5" label="Specify value of Y (where 1.0 = 100%)"/>
+        <param name="cutoff" size="10" type="integer" value="1" label="Filter out OTUs. Remove OTUs from the analysis that do not appear more than X times in more than Y% of the samples. Specify value of X" help="Remove OTUs that do not appear more than X times (e.g., 5 times)"/>
+        <param name="nsample" size="10" type="float" value="0.0" label="Specify value of Y (where 1.0 = 100%)"/>
     </inputs>
 
     <outputs>
@@ -65,27 +65,30 @@
 
     <tests>
         <test>  <!-- Test #1: Test BIOM format input -->
-                <!-- Equivalent command (replace + with double dash): Rscript phyloseq_nmds.R +biom=test-data/GP.biom +subset=6 +method=NMDS
-                +distance=bray +kingdom=Phylum +cutoff=5 +keep=5 +outdir=outputdir +htmlfile=biom_out.html -->
             <conditional name="file_source">
                 <param name="file_source_selector" value="set_biom"/>
-                <param name="input" value="GP.biom" />
-                <param name="subsetColumn" value="Primer" />
+                <param name="input" value="GP.biom" ftype="biom1"/>
             </conditional>
             <output name="htmlfile" ftype="html" file="biom_out.html" />
+            <output name="outputbiom" >
+                <assert_contents>
+                    <has_text text="Biological Observation Matrix"/>
+                </assert_contents>
+            </output>
         </test>
         <test>  <!-- Test #2: Test TABULAR format inputs -->
-                <!-- Equivalent command (replace + with double dash): Rscript phyloseq_nmds.R +otu_table=test-data/GP_OTU_TABLE.txt
-                +tax_table=test-data/GP_TAX_TABLE.txt +meta_table=test-data/GP_SAMPLE_TABLE.txt
-                +method="bray" +kingdom=Phylum +cutoff=5 + keep=5 +category=6 +outdir=outputdir +htmlfile=test.html -->
             <conditional name="file_source">
                 <param name="file_source_selector" value="set_table" />
                 <param name="OTU_TABLE" value="GP_OTU_TABLE.txt" />
                 <param name="TAX_TABLE" value="GP_TAX_TABLE.txt" />
                 <param name="META_TABLE" value="GP_SAMPLE_TABLE.txt" />
-                <param name="category" value="6" />
             </conditional>
-            <output name="htmlfile" ftype="html" file="test.html" />
+            <output name="htmlfile" ftype="html" file="matrix_out.html" />
+            <output name="outputbiom" >
+                <assert_contents>
+                    <has_text text="Biological Observation Matrix"/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
 

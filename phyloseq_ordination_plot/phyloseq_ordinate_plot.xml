@@ -20,10 +20,16 @@
             --meta_table='$META_TABLE'
             --category='$file_source.category'
         #end if
+        #if str($plot_selection.plot_type) == "2":
+            --plottype='$plot_selection.plot_type'
+            --kingdom='null'
+        #else:
+            --plottype='$plot_selection.plot_type'
+            --kingdom='$plot_selection.kingdom_field'
+        #end if
         --method='$ord_method'
         --distance='$distance'
-        --kingdom='$kingdom_field'
-        --plottype='$plot_type'
+        --log='$log'
         --outdir="$htmlfile.files_path"
         --htmlfile='$htmlfile'
         ]]>
@@ -66,7 +72,7 @@
             <option value="unifrac">unifrac (unweighted UniFrac distance)</option>
             <option value="wunifrac">wunifrac (weighted-UniFrac distance)</option>
         </param>
-        <param name="kingdom_field" type="select" display="radio" label="Select a taxonomic rank for the analysis">
+<!--    <param name="kingdom_field" type="select" display="radio" label="Select a taxonomic rank for the analysis">
             <option value="Kingdom">Kingdom</option>
             <option value="Phylum" selected="true">Phylum</option>
             <option value="Class">Class</option>
@@ -75,14 +81,53 @@
             <option value="Genus">Genus</option>
             <option value="Species">Species</option>
         </param>
-        <param name="plot_type" type="select" label="Type of Plot" help="Ordination plot type (Plot OTUs, Plot SAMPLE, Biplot graphic, Split plot graphic)">
-            <option value="1">OTU</option>
-            <option value="2" selected="true">SAMPLE</option>
-            <option value="3">BIPLOT</option>
-            <option value="4">SPLIT PLOT</option>
-        </param>
+ -->
+        <conditional name="plot_selection">
+            <param name="plot_type" type="select" label="Type of Plot" help="Ordination plot type (Plot OTUs, Plot SAMPLE, Biplot graphic, Split plot graphic)">
+                <option value="1">OTU</option>
+                <option value="2" selected="true">SAMPLE</option>
+                <option value="3">BIPLOT</option>
+                <option value="4">SPLIT PLOT</option>
+            </param>
+            <when value="1">
+                <param name="kingdom_field" type="select" display="radio" label="Select a taxonomic rank for the analysis">
+                    <option value="Kingdom">Kingdom</option>
+                    <option value="Phylum" selected="true">Phylum</option>
+                    <option value="Class">Class</option>
+                    <option value="Order">Order</option>
+                    <option value="Family">Family</option>
+                    <option value="Genus">Genus</option>
+                    <option value="Species">Species</option>
+                </param>
+            </when>
+            <when value="2">
+            </when>
+            <when value="3">
+                <param name="kingdom_field" type="select" display="radio" label="Select a taxonomic rank for the analysis">
+                    <option value="Kingdom">Kingdom</option>
+                    <option value="Phylum" selected="true">Phylum</option>
+                    <option value="Class">Class</option>
+                    <option value="Order">Order</option>
+                    <option value="Family">Family</option>
+                    <option value="Genus">Genus</option>
+                    <option value="Species">Species</option>
+                </param>    
+            </when>
+            <when value="4">
+                <param name="kingdom_field" type="select" display="radio" label="Select a taxonomic rank for the analysis">
+                    <option value="Kingdom">Kingdom</option>
+                    <option value="Phylum" selected="true">Phylum</option>
+                    <option value="Class">Class</option>
+                    <option value="Order">Order</option>
+                    <option value="Family">Family</option>
+                    <option value="Genus">Genus</option>
+                    <option value="Species">Species</option>
+                </param>
+            </when>
+        </conditional>
     </inputs>
     <outputs>
+        <data format="txt" name="log" label="${tool.name} - stress value - distance matrix - sample column sum"/>
         <data format="html" name="htmlfile" label="${tool.name} - ${ord_method.value_label}_${distance.value_label}.html"/>
     </outputs>
 
