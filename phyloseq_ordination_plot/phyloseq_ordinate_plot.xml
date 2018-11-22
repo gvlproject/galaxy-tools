@@ -111,7 +111,7 @@
                     <option value="Family">Family</option>
                     <option value="Genus">Genus</option>
                     <option value="Species">Species</option>
-                </param>    
+                </param>
             </when>
             <when value="4">
                 <param name="kingdom_field" type="select" display="radio" label="Select a taxonomic rank for the analysis">
