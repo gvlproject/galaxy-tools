@@ -54,8 +54,8 @@
             <option value="Species">Species</option>
         </param>
         <param name="keep" size="10" type="integer" value="5" label="Number of the most abundant taxonomic rank units to keep in the filtered BIOM file" help="e.g. Phyla, Class and etc. as specified above. Select a value > 1."/>
-        <param name="cutoff" size="10" type="integer" value="5" label="Filter out OTUs. Remove OTUs from the analysis that do not appear more than X times in more than Y% of the samples. Specify value of X" help="Remove OTUs that do not appear more than X times (e.g., 5 times)"/>
-        <param name="nsample" size="10" type="float" value="0.5" label="Specify value of Y (where 1.0 = 100%)"/>
+        <param name="cutoff" size="10" type="integer" value="1" label="Filter out OTUs. Remove OTUs from the analysis that do not appear more than X times in more than Y% of the samples. Specify value of X" help="Remove OTUs that do not appear more than X times (e.g., 5 times)"/>
+        <param name="nsample" size="10" type="float" value="0.0" label="Specify value of Y (where 1.0 = 100%)"/>
     </inputs>
 
     <outputs>

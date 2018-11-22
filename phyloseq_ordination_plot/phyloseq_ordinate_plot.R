@@ -26,6 +26,7 @@ option_specification = matrix(c(
      'kingdom','k',2,'character',
     'plottype','e',2,'numeric',
     'category','g',2,'numeric',
+         'log','l',2,'character',
       'outdir','r',2,'character',
     'htmlfile','h',2,'character'
 ),byrow=TRUE,ncol=4);
@@ -53,7 +54,7 @@ pdffile <- gsub("[ ]+", "", paste(options$outdir,"/pdffile.pdf"))
 pngfile_nmds <- gsub("[ ]+", "", paste(options$outdir,"/nmds.png"))
 pngfile_nmds_facet <- gsub("[ ]+", "", paste(options$outdir,"/nmds_facet.png"))
 htmlfile <- gsub("[ ]+", "", paste(options$htmlfile))
-
+output_summary <- gsub("[ ]+", "", paste(options$log))
 
 ### This function accepts different two different type of BIOM file format
 readBIOM<-function(inBiom){
@@ -83,21 +84,21 @@ readBIOM<-function(inBiom){
 
 create_OTU_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlfile,pngfile_nmds,pngfile_nmds_facet){
     pdf(pdf_file);
-    p1<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color="Phylum",title="taxa")
+    p1<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
     print(p1)
-    p2<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color="Phylum",title="taxa") + facet_wrap(formula(paste('~',kingdom_str)),3)
+    p2<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + facet_wrap(formula(paste('~',kingdom_str)),3) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
     print(p2)
     garbage<-dev.off();
 
     #png('nmds.png')
-    bitmap(pngfile_nmds,"png16m")
-    p3<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color="Phylum",title="taxa")
+    bitmap(pngfile_nmds,"png16m",res=120)
+    p3<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
     print(p3)
     garbage<-dev.off()
 
     #png('nmds_facet.png')
-    bitmap(pngfile_nmds_facet,"png16m")
-    p4<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color="Phylum",title="taxa") + facet_wrap(formula(paste('~',kingdom_str)),3)
+    bitmap(pngfile_nmds_facet,"png16m",res=120)
+    p4<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + facet_wrap(formula(paste('~',kingdom_str)),3) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
     print(p4)
     garbage<-dev.off()
 
@@ -107,14 +108,14 @@ create_OTU_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlfile
 create_SAMPLE_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,htmlfile,pngfile_nmds,category_type){
     pdf(pdf_file);
     p <- plot_ordination(phyloseq_obj, phyloseq_ord, type="samples", color=category_type)
-    p <- p + geom_point(aes(fill=category_type)) + geom_point(size=5) + ggtitle("samples")
+    p <- p + geom_point(aes(fill=category_type)) + geom_point(size=5) + ggtitle(paste("Samples - Stress value",formatC(phyloseq_ord$stress,digits=4,format="f"),sep=":")) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
     print(p)
     garbage<-dev.off();
 
     #png('nmds.png')
-    bitmap(pngfile_nmds,"png16m")
+    bitmap(pngfile_nmds,"png16m",res=120)
     p1 <- plot_ordination(phyloseq_obj, phyloseq_ord, type="samples", color=category_type)
-    p1 <- p1 + geom_point(aes(fill=category_type)) + geom_point(size=5) + ggtitle("samples")
+    p1 <- p1 + geom_point(aes(fill=category_type)) + geom_point(size=5) + ggtitle(paste("Samples - Stress value",formatC(phyloseq_ord$stress,digits=4,format="f"),sep=":")) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
     print(p1)
     garbage<-dev.off();
 
@@ -124,12 +125,12 @@ create_SAMPLE_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,htmlfile,pngfile_
 create_BIPLOT_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlfile,pngfile_nmds,category_type){
     pdf(pdf_file);
     print(category_type)
-    p_biplot <- plot_ordination(phyloseq_obj, phyloseq_ord, type="biplot", color=category_type, shape=kingdom_str,title="BIPLOT")
+    p_biplot <- plot_ordination(phyloseq_obj, phyloseq_ord, type="biplot", color=category_type, shape=kingdom_str,title="BIPLOT") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
     print(p_biplot)
     garbage<-dev.off();
 
-    bitmap(pngfile_nmds,"png16m")
-    p_biplot_png <- plot_ordination(phyloseq_obj, phyloseq_ord, type="biplot", color=category_type, shape=kingdom_str,title="BIPLOT")
+    bitmap(pngfile_nmds,"png16m",res=120)
+    p_biplot_png <- plot_ordination(phyloseq_obj, phyloseq_ord, type="biplot", color=category_type, shape=kingdom_str,title="BIPLOT") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
     print(p_biplot_png)
     garbage<-dev.off();
 
@@ -139,13 +140,13 @@ create_BIPLOT_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlf
 create_SPLITPLOT_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlfile,pngfile_nmds,category_type){
    pdf(pdf_file,width=10, height=6);
    split_plot <- plot_ordination(phyloseq_obj, phyloseq_ord, type="split", color=kingdom_str, shape=kingdom_str, label=category_type, title="SPLIT PLOT")
-   split_plot <- split_plot + theme(plot.margin = unit(c(12,18,12,18),"pt"))
+   split_plot <- split_plot + theme(plot.margin = unit(c(12,18,12,18),"pt"),legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
    print(split_plot)
    garbage<-dev.off();
 
-   bitmap(pngfile_nmds,"png16m", width=6, height=4, units="in",res=200)
+   bitmap(pngfile_nmds,"png16m", res=120)
    split_plot <- plot_ordination(phyloseq_obj, phyloseq_ord, type="split", color=kingdom_str, shape=kingdom_str, label=category_type, title="SPLIT PLOT") 
-   split_plot <- split_plot + theme(plot.margin = unit(c(12,18,12,18),"pt"))
+   split_plot <- split_plot + theme(plot.margin = unit(c(12,18,12,18),"pt"),legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
    print(split_plot)
    garbage<-dev.off();
    create_HTML_2(htmlfile)
@@ -154,15 +155,15 @@ create_SPLITPLOT_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,ht
 create_HTML_1<-function(htmlfile){
     htmlfile_handle <- file(htmlfile)
     html_output = c('<html><body>',
-                    '<table align="center>',
+                    '<table align="center">',
                     '<tr>',
                     '<td valign="middle" style="vertical-align:middle;">',
-                        '<a href="pdffile.pdf"><img src="nmds.png"/></a>',
+                        '<a href="pdffile.pdf"><img src="nmds.png" width="800" height="800"/></a>',
                     '</td>',
                     '</tr>',
                     '<tr>',
                     '<td valign="middle" style="vertical-align:middle;">',
-                    '<a href="pdffile.pdf"><img src="nmds_facet.png"/></a>',
+                    '<a href="pdffile.pdf"><img src="nmds_facet.png" width="800" height="800"/></a>',
                     '</td>',
                     '</tr>',
                     '</table>',
@@ -174,10 +175,10 @@ create_HTML_1<-function(htmlfile){
 create_HTML_2<-function(htmlfile){
     htmlfile_handle <- file(htmlfile)
     html_output = c('<html><body>',
-                    '<table align="center>',
+                    '<table align="center">',
                     '<tr>',
                     '<td valign="middle" style="vertical-align:middle;">',
-                        '<a href="pdffile.pdf"><img src="nmds.png"/></a>',
+                        '<a href="pdffile.pdf"><img src="nmds.png" width="800" height="800"/></a>',
                     '</td>',
                     '</tr>',
                     '</table>',
@@ -233,12 +234,51 @@ if(!is.null(options$biom)){
     ### create a phyloseq object
     physeq = phyloseq(OTU,TAX,sample_object)
 }
-#   sample_data(physeq_filter)$category_input <- factor(category_input)
+
     category_input = get_variable(physeq, category_type) %in% category_option
     sample_data(physeq)$category_input <- factor(category_input)
 
-#   physeq_ord<-ordinate(physeq_filter,method,distance)
+#   compute distance matrix
     physeq_ord<-ordinate(physeq,method,distance)
+    
+#   get column sum
+    sum_table<-data.frame(column_sum=as.matrix(colSums(otu_table(physeq))))
+
+    rowname_table<-data.frame(sample=rownames(sum_table))
+
+    output_table<-as.data.frame(cbind(rowname_table,sum_table))
+
+    output_table<-output_table[order(output_table$column_sum),]
+    
+#   Reformat distance matrix
+    distance_matrix<-as.data.frame(physeq_ord$points)
+    distance_matrix<-cbind(sample=rownames(distance_matrix),distance_matrix)
+
+    sink(output_summary)
+    cat('--------------------------------------')
+    cat('\n')
+    cat('Stress value')
+    cat('\n')
+    cat(formatC(physeq_ord$stress,digits=4,format="f"))
+    cat('\n')
+    cat('--------------------------------------')
+    cat('\n')
+    cat('Sample - Column Sum')
+    cat('\n')
+    cat('--------------------------------------')
+    cat('\n')
+    write.table(output_table,row.names=F,quote=F)
+    cat('\n')
+    cat('--------------------------------------')
+    cat('\n')
+    cat('Distance Matrix')
+    cat('\n')
+    cat('--------------------------------------')
+    cat('\n')
+    write.table(distance_matrix,row.names=F,quote=F)
+    cat('\n')
+    cat('--------------------------------------')
+    sink()
 
 if(plottype == 1){
     #kingdom_str = colnames(tax_table)[2]
