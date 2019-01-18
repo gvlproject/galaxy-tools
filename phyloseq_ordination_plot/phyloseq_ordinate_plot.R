@@ -22,6 +22,7 @@ option_specification = matrix(c(
         'biom','b',2,'character',
       'subset','s',2,'character',
       'method','n',2,'character',
+        'nCol','c',2,'character',
     'distance','d',2,'character',
      'kingdom','k',2,'character',
     'plottype','e',2,'numeric',
@@ -48,6 +49,8 @@ method<-options$method
 kingdom_str<-options$kingdom
 distance<-options$distance
 plottype<-options$plottype
+numCol<-as.numeric(options$nCol)
+
 
 ### prepare the directory and file name
 pdffile <- gsub("[ ]+", "", paste(options$outdir,"/pdffile.pdf"))
@@ -84,21 +87,33 @@ readBIOM<-function(inBiom){
 
 create_OTU_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlfile,pngfile_nmds,pngfile_nmds_facet){
     pdf(pdf_file);
-    p1<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+    p1<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+    if(!is.na(numCol)){
+        p1 <- p1 + guides(col = guide_legend(ncol=numCol))
+    }
     print(p1)
-    p2<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + facet_wrap(formula(paste('~',kingdom_str)),3) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+    p2<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + facet_wrap(formula(paste('~',kingdom_str)),3) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+    if(!is.na(numCol)){
+        p2 <- p2 + guides(col = guide_legend(ncol=numCol))
+    }
     print(p2)
     garbage<-dev.off();
 
     #png('nmds.png')
     bitmap(pngfile_nmds,"png16m",res=120)
-    p3<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+    p3<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+    if(!is.na(numCol)){
+        p3 <- p3 + guides(col = guide_legend(ncol=numCol))
+    }
     print(p3)
     garbage<-dev.off()
 
     #png('nmds_facet.png')
     bitmap(pngfile_nmds_facet,"png16m",res=120)
-    p4<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + facet_wrap(formula(paste('~',kingdom_str)),3) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+    p4<-plot_ordination(phyloseq_obj,phyloseq_ord,type="taxa",color=kingdom_str,title="taxa") + facet_wrap(formula(paste('~',kingdom_str)),3) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+    if(!is.na(numCol)){
+        p4 <- p4 + guides(col = guide_legend(ncol=numCol))
+    }
     print(p4)
     garbage<-dev.off()
 
@@ -108,14 +123,20 @@ create_OTU_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlfile
 create_SAMPLE_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,htmlfile,pngfile_nmds,category_type){
     pdf(pdf_file);
     p <- plot_ordination(phyloseq_obj, phyloseq_ord, type="samples", color=category_type)
-    p <- p + geom_point(aes(fill=category_type)) + geom_point(size=5) + ggtitle(paste("Samples - Stress value",formatC(phyloseq_ord$stress,digits=4,format="f"),sep=":")) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+    p <- p + geom_point(aes(fill=category_type)) + geom_point(size=5) + ggtitle(paste("Samples - Stress value",formatC(phyloseq_ord$stress,digits=4,format="f"),sep=":")) +  theme(legend.title=element_blank(),legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+    if(!is.na(numCol)){
+    p <- p + guides(col = guide_legend(ncol=numCol))
+    }
     print(p)
     garbage<-dev.off();
 
     #png('nmds.png')
     bitmap(pngfile_nmds,"png16m",res=120)
     p1 <- plot_ordination(phyloseq_obj, phyloseq_ord, type="samples", color=category_type)
-    p1 <- p1 + geom_point(aes(fill=category_type)) + geom_point(size=5) + ggtitle(paste("Samples - Stress value",formatC(phyloseq_ord$stress,digits=4,format="f"),sep=":")) +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+    p1 <- p1 + geom_point(aes(fill=category_type)) + geom_point(size=5) + ggtitle(paste("Samples - Stress value",formatC(phyloseq_ord$stress,digits=4,format="f"),sep=":")) +  theme(legend.title=element_blank(),legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+    if(!is.na(numCol)){
+    p1 <- p1 + guides(col = guide_legend(ncol=numCol))
+    }
     print(p1)
     garbage<-dev.off();
 
@@ -125,12 +146,18 @@ create_SAMPLE_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,htmlfile,pngfile_
 create_BIPLOT_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlfile,pngfile_nmds,category_type){
     pdf(pdf_file);
     print(category_type)
-    p_biplot <- plot_ordination(phyloseq_obj, phyloseq_ord, type="biplot", color=category_type, shape=kingdom_str,title="BIPLOT") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+    p_biplot <- plot_ordination(phyloseq_obj, phyloseq_ord, type="biplot", color=category_type, shape=kingdom_str,title="BIPLOT") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+    if(!is.na(numCol)){
+    p_biplot <- p_biplot + guides(col = guide_legend(ncol=numCol))
+    }
     print(p_biplot)
     garbage<-dev.off();
 
     bitmap(pngfile_nmds,"png16m",res=120)
-    p_biplot_png <- plot_ordination(phyloseq_obj, phyloseq_ord, type="biplot", color=category_type, shape=kingdom_str,title="BIPLOT") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+    p_biplot_png <- plot_ordination(phyloseq_obj, phyloseq_ord, type="biplot", color=category_type, shape=kingdom_str,title="BIPLOT") +  theme(legend.position="bottom",legend.box="vertical",legend.direction="horizontal", legend.text=element_text(size=9))
+    if(!is.na(numCol)){
+    p_biplot_png <- p_biplot_png + guides(col = guide_legend(ncol=numCol))
+    }
     print(p_biplot_png)
     garbage<-dev.off();
 
@@ -140,14 +167,20 @@ create_BIPLOT_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlf
 create_SPLITPLOT_PDF<-function(pdf_file,phyloseq_obj,phyloseq_ord,kingdom_str,htmlfile,pngfile_nmds,category_type){
    pdf(pdf_file,width=10, height=6);
    split_plot <- plot_ordination(phyloseq_obj, phyloseq_ord, type="split", color=kingdom_str, shape=kingdom_str, label=category_type, title="SPLIT PLOT")
-   split_plot <- split_plot + theme(plot.margin = unit(c(12,18,12,18),"pt"),legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
+   split_plot <- split_plot + theme(plot.margin = unit(c(12,18,12,18),"pt"),legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+   if(!is.na(numCol)){
+       split_plot <- split_plot + guides(col = guide_legend(ncol=numCol))
+   }
    print(split_plot)
    garbage<-dev.off();
 
    bitmap(pngfile_nmds,"png16m", res=120)
-   split_plot <- plot_ordination(phyloseq_obj, phyloseq_ord, type="split", color=kingdom_str, shape=kingdom_str, label=category_type, title="SPLIT PLOT") 
-   split_plot <- split_plot + theme(plot.margin = unit(c(12,18,12,18),"pt"),legend.position="bottom",legend.box="vertical",legend.direction="horizontal")
-   print(split_plot)
+   split_plot_png <- plot_ordination(phyloseq_obj, phyloseq_ord, type="split", color=kingdom_str, shape=kingdom_str, label=category_type, title="SPLIT PLOT") 
+   split_plot_png <- split_plot_png + theme(plot.margin = unit(c(12,18,12,18),"pt"),legend.position="bottom",legend.box="vertical",legend.direction="horizontal",legend.text=element_text(size=9))
+   if(!is.na(numCol)){
+       split_plot_png <- split_plot_png + guides(col = guide_legend(ncol=numCol))
+   }
+   print(split_plot_png)
    garbage<-dev.off();
    create_HTML_2(htmlfile)
 }
