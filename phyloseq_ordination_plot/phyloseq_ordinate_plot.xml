@@ -27,6 +27,11 @@
             --plottype='$plot_selection.plot_type'
             --kingdom='$plot_selection.kingdom_field'
         #end if
+        #if str($legend_option.legend_option_selector) == "set":
+            --nCol='$legend_option.numCol'
+        #else:
+            --nCol='null'
+        #end if
         --method='$ord_method'
         --distance='$distance'
         --log='$log'
@@ -123,6 +128,22 @@
                     <option value="Genus">Genus</option>
                     <option value="Species">Species</option>
                 </param>
+            </when>
+        </conditional>
+        <conditional name="legend_option">
+            <param name="legend_option_selector" type="select" label="Format legend (number of column)">
+                <option value="set">Set</option>
+                <option value="do_not_set" selected="True">Do not set</option>
+            </param>
+            <when value="set">
+                <param name="numCol" type="select" label="Number of Column">
+                     <option value="2">2</option>
+                     <option value="4">4</option>
+                     <option value="6">6</option>
+                </param>
+            </when>
+            <when value="do_not_set">
+                <!-- do nothing -->
             </when>
         </conditional>
     </inputs>
